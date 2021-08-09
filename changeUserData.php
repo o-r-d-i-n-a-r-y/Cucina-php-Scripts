@@ -15,6 +15,12 @@
 
 		$change_data = "UPDATE users SET username = '".$username."' WHERE phone = '".$phone."'";
 	}
+	elseif($_GET['apicall'] == 'city') {
+		$sec_data_changed = true;
+		$city = $_POST['city'];
+
+		$change_data = "UPDATE users SET city = '".$city."' WHERE phone = '".$phone."'";
+	}
 	else {
 		$sec_data_changed = true;
 		$password = md5($_POST['password']);
@@ -28,7 +34,6 @@
 	else {
 		echo "Error updating data: " . $conn->error;
 	}
-
 
 	mysqli_close($conn);
 ?>	
