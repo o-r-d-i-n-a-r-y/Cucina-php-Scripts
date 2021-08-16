@@ -3,32 +3,46 @@
 
 	$phone = $_POST['phone'];
 	$change_data = '';
-	$sec_data_changed = false;
+	$sec_data = 0;
 
 	if($_GET['apicall'] == 'username') {
 		$username = $_POST['username'];
 
 		$change_in_orders = "UPDATE orders SET order_name = '".$username."' WHERE order_phone = '".$phone."'";
 		if(mysqli_query($conn, $change_in_orders)) {
-			$sec_data_changed = true;
+			$sec_data = 1;
 		}
 
 		$change_data = "UPDATE users SET username = '".$username."' WHERE phone = '".$phone."'";
 	}
 	elseif($_GET['apicall'] == 'city') {
-		$sec_data_changed = true;
 		$city = $_POST['city'];
+
+		$check_orders = $conn->prepare("SELECT id FROM orders WHERE order_phone = ? AND state < 3");
+		$check_orders->bind_param("s", $phone);
+		$check_orders ->execute();
+		$check_orders ->bind_result($id);
+
+		if($check_orders ->fetch()) {
+			$sec_data = 2;
+		}
+		else {
+			$sec_data = 1;
+		}
 
 		$change_data = "UPDATE users SET city = '".$city."' WHERE phone = '".$phone."'";
 	}
 	else {
-		$sec_data_changed = true;
+		$sec_data = 1;
 		$password = md5($_POST['password']);
 
 		$change_data = "UPDATE users SET password = '".$password."' WHERE phone = '".$phone."'";
 	}
 
-	if (mysqli_query($conn, $change_data) && $sec_data_changed) {
+	if ($sec_data == 2) {
+		echo "ACTIVE_ORDERS";
+	}
+	elseif (mysqli_query($conn, $change_data) && $sec_data == 1) {
 		echo "SUCCESS";
 	}
 	else {

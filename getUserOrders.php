@@ -23,4 +23,6 @@
 	}
 
 	echo json_encode($orders);
+
+	mysqli_close($conn);
 ?>
