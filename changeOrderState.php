@@ -12,4 +12,6 @@
 	else {
 		echo "Error updating data: " . $conn->error;
 	}
+
+	mysqli_close($conn);
 ?>

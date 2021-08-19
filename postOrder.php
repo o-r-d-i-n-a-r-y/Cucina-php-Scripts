@@ -37,4 +37,6 @@
 	else {
 		echo "2";	// user already has 5 active orders
 	}
+
+	mysqli_close($conn);
 ?>

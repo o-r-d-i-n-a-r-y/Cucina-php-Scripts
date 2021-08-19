@@ -1,5 +1,4 @@
 <?php
-
 	include('connection.php'); 
 
 	$stmt = $conn->prepare("SELECT name, category, dish_group, description, img_url, price FROM dishes");
@@ -23,4 +22,6 @@
 	}
 
 	echo json_encode($dishes);
+
+	mysqli_close($conn);
 ?>
