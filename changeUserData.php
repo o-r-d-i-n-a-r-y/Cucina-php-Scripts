@@ -36,7 +36,7 @@
 		$new_phone = $_POST['new_phone'];
 
 		$check_orders = $conn->prepare("SELECT id FROM orders WHERE order_phone = ? AND state < 3");
-		$check_orders->bind_param("s", $phone);
+		$check_orders ->bind_param("s", $phone);
 		$check_orders ->execute();
 		$check_orders ->bind_result($id);
 
@@ -44,9 +44,19 @@
 			$sec_data = 2;
 		}
 		else {
-			$change_in_orders = "UPDATE orders SET order_name = '".$username."' WHERE order_phone = '".$phone."'";
-			if(mysqli_query($conn, $change_in_orders)) {
-				$sec_data = 1;
+			$check_users = $conn->prepare("SELECT id FROM users WHERE phone = ?");
+			$check_users ->bind_param("s", $phone);
+			$check_users ->execute();
+			$check_users ->bind_result($id);
+			
+			if($check_users ->fetch()) {
+				$sec_data = 3;
+			}
+			else {
+				$change_in_orders = "UPDATE orders SET order_name = '".$username."' WHERE order_phone = '".$phone."'";
+				if(mysqli_query($conn, $change_in_orders)) {
+					$sec_data = 1;
+				}
 			}
 		}
 
@@ -61,6 +71,9 @@
 
 	if ($sec_data == 2) {
 		echo "ACTIVE_ORDERS";
+	}
+	elseif ($sec_data == 3) {
+		echo "PHONE_TAKEN";
 	}
 	elseif (mysqli_query($conn, $change_data) && $sec_data == 1) {
 		echo "SUCCESS";
